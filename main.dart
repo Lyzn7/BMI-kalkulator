@@ -9,10 +9,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "BMI calculator",
+      title: "BMI Calculator",
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -32,38 +31,45 @@ class _HomepageState extends State<Homepage> {
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   double bmiResult = 0.0;
+  String category = "";
+  Color categoryColor = Colors.grey;
 
   void calculatedBMI({required double weight, required double height}) {
     final double bmi = (weight * 10000) / (height * height);
+    final result = determineCategory(bmi);
 
     setState(() {
       bmiResult = bmi;
+      category = result["category"] as String;
+      categoryColor = result["color"] as Color;
     });
   }
 
   void clearResult() {
     setState(() {
       bmiResult = 0.0;
+      category = "";
+      categoryColor = Colors.grey;
       heightController.clear();
       weightController.clear();
     });
   }
 
-  String determineCategory({required double bmiResult}) {
+  Map<String, dynamic> determineCategory(double bmiResult) {
     if (bmiResult < 1) {
-      return '';
+      return {"category": "", "color": Colors.grey};
     } else if (bmiResult < 18.5) {
-      return 'Berat Badan Kurang';
+      return {"category": "Berat Badan Kurang", "color": Colors.blue};
     } else if (bmiResult <= 24.9) {
-      return 'Berat Badan Normal';
+      return {"category": "Berat Badan Normal", "color": Colors.green};
     } else if (bmiResult <= 29.9) {
-      return 'Berat Badan Berlebihan';
+      return {"category": "Berat Badan Berlebihan", "color": Colors.yellow};
     } else if (bmiResult <= 34.9) {
-      return 'Obesitas Tingkat I';
+      return {"category": "Obesitas Tingkat I", "color": Colors.orange};
     } else if (bmiResult <= 39.9) {
-      return 'Obesitas Tingkat II';
+      return {"category": "Obesitas Tingkat II", "color": Colors.red};
     } else {
-      return 'Obesitas Tingkat III';
+      return {"category": "Obesitas Tingkat III", "color": Colors.purple};
     }
   }
 
@@ -72,7 +78,15 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: const Text("Hitung Indeks Massa Tubuh (IMT)"),
+        title: const Text(
+          "Hitung Indeks Massa Tubuh (IMT)",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Center(
         child: Padding(
@@ -80,46 +94,59 @@ class _HomepageState extends State<Homepage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: weightController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Berat Badan (Kg)',
-                ),
+              Row(
+                children: [
+                  const Icon(Icons.monitor_weight_outlined, size: 50),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: weightController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Berat Badan (Kg)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 10.0,
+              const SizedBox(height: 10.0),
+              Row(
+                children: [
+                  const Icon(Icons.height, size: 50),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: heightController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Tinggi Badan (Cm)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              TextField(
-                controller: heightController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Tinggi Badan (Cm)',
-                ),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
+              const SizedBox(height: 20.0),
               ElevatedButton(
-                  onPressed: () {
-                    if (weightController.text.isNotEmpty &&
-                        heightController.text.isNotEmpty) {
-                      calculatedBMI(
-                        weight: double.parse(weightController.text),
-                        height: double.parse(heightController.text),
-                      );
-                    }
-                  },
-                  child: const Text("HITUNG")),
-              const SizedBox(
-                height: 20.0,
+                onPressed: () {
+                  if (weightController.text.isNotEmpty &&
+                      heightController.text.isNotEmpty) {
+                    calculatedBMI(
+                      weight: double.parse(weightController.text),
+                      height: double.parse(heightController.text),
+                    );
+                  }
+                },
+                child: const Text("HITUNG"),
               ),
+              const SizedBox(height: 20.0),
               bmiResult > 0.0
                   ? Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        color: categoryColor,
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: Column(
@@ -130,20 +157,24 @@ class _HomepageState extends State<Homepage> {
                             bmiResult.toStringAsFixed(2),
                             style: const TextStyle(fontSize: 35.0),
                           ),
-                          Text(determineCategory(bmiResult: bmiResult))
+                          Text(
+                            category,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          )
                         ],
                       ),
                     )
                   : const SizedBox.shrink(),
-              const SizedBox(
-                height: 20.0,
-              ),
+              const SizedBox(height: 20.0),
               bmiResult > 0.0
                   ? ElevatedButton(
-                      onPressed: () {
-                        clearResult();
-                      },
-                      child: const Text("BERSIHKAN"))
+                      onPressed: clearResult,
+                      child: const Text("BERSIHKAN"),
+                    )
                   : const SizedBox.shrink(),
             ],
           ),
