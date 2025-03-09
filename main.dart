@@ -129,7 +129,8 @@ class _HomepageState extends State<Homepage> {
                           Text(
                             bmiResult.toStringAsFixed(2),
                             style: const TextStyle(fontSize: 35.0),
-                          )
+                          ),
+                          Text(determineCategory(bmiResult: bmiResult))
                         ],
                       ),
                     )
