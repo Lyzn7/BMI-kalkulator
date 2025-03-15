@@ -1,4 +1,5 @@
-# BMI Calculator
+# BMI Calculator Penghitung Indeks masa tuuh
+
 
 ## Deskripsi
 BMI Calculator adalah aplikasi berbasis Flutter yang digunakan untuk menghitung Indeks Massa Tubuh (IMT) berdasarkan berat badan dan tinggi badan pengguna. Aplikasi ini memberikan kategori berat badan berdasarkan nilai BMI yang dihitung.
