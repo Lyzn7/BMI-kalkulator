@@ -1,4 +1,4 @@
-# BMI Calculator Penghitung Indeks masa tuuh
+# BMI Calculator Penghitung Indeks masa tubuh 
 
 
 ## Deskripsi
